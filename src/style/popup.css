@@ -1,0 +1,62 @@
+:root {
+/* font */	--font-neutral-1:#000;	--font-neutral-2:#191B1E;	--font-neutral-3:#22252A;	--font-neutral-4:#343841;	--font-neutral-5:#4B515D;	--font-neutral-6:#626A7A;	--font-neutral-7:#969DAB;	--font-neutral-8:#B2B7C2;	--font-navy-900 : #1A3A6D;
+/* font colored */	--font-point-1:#FF3F53;	--font-point-2:#5D67CF;	--font-point-3:#6495B0;	--font-point-4:#3D609D;	
+/* background */	--background-color-1:#fff;	--background-color-2:#F3F5F8; --background-color-3:#CCD5EB66;
+/* color */	--black:#000;	--white:#fff;	--gray-20:#F8F9FC;	--gray-40:#F3F5F8;	--gray-60:#E7E9EF;	--gray-100:#CDD1DA;	--gray-200:#B2B7C2;	--gray-300:#969DAB;	--gray-400:#7A8394;	--gray-500:#626A7A;	--gray-600:#4B515D;	--gray-700:#343841;	--gray-800:#22252A;	--gray-900:#191B1E;	--gray-950:#0E1013;
+/* dim */	--dim-color-thick:rgba(122,131,148,.9);
+/* button */	--button-primary:#1A3A6D;	--button-primary-tc:#fff;	
+/* input */	--input-border:rgba(205, 209, 218, 0.6); 	--input-focus-border:var(--gray-950);	--input-disabled-bg:#F3F5F8;	--input-disabled-tc:rgba(0,0,0,.25);	--input-radius:8px;
+/* etc */
+--trans-img: linear-gradient(45deg, #b0b0b0 25%, transparent 25%), linear-gradient(-45deg, #b0b0b0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #b0b0b0 75%), linear-gradient(-45deg, transparent 75%, #b0b0b0 75%);
+--trans-size: 18px 18px;    --trans-position: 0 0, 0 9px, 9px -9px, -9px 0
+}
+body {font-family:sans-serif; padding:0; margin:0 0; background-color:var(--background-color-3);}
+div {box-sizing:border-box;}
+input, button, select {width:100%; padding:5px;}
+ul {padding:0; list-style:none;}
+li {margin:5px 0; padding:5px; background:#f9f9f9; border:1px solid #ddd; position:relative;}
+input[type=text], input[type=password], input[type=tel], input[type=number], input[type=search], input[type=email], input[type=date] {width:100%; color:var(--font-neutral-2); border:1px solid var(--input-border); border-radius:var(--input-radius); padding:2px 10px; font-size:15px; background:#fff; box-sizing:border-box; line-height:28px;}
+input[type=text]:focus, input[type=password]:focus, input[type=tel]:focus, input[type=number]:focus, input[type=search]:focus, input[type=date]:focus, input[type=email]:focus{border-color:var(--input-focus-border); outline:none;}
+input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none}
+input[type=text]:disabled, input[type=password]:disabled, input[type=tel]:disabled, input[type=number]:disabled, input[type=search]:disabled{color:var(--input-disabled-tc); border-color:rgba(205, 209, 218, .4); background:var(--input-disabled-bg);}
+input[type=text]:disabled:focus, input[type=password]:disabled:focus, input[type=tel]:disabled:focus, input[type=number]:disabled:focus, input[type=search]:disabled:focus{border-color:#ddd !important; box-shadow:none;}
+input[readonly]{background:#f9fafc !important}
+input[readonly]:focus{border-color:#ddd !important; border-width:1px !important}
+input[type=radio][readonly]+label{background:var(--background-color-2);}
+input[type=radio][readonly]:checked+label{background:#fff}
+input[type=radio]:disabled+label{background:var(--background-color-2);}
+input[type=radio]:disabled:checked+label{background:#fff}
+input[type=file]::file-selector-button {}
+.i-o-w {min-width:480px;}
+.delete {float:right; color:red; font-size:18px; cursor:pointer;}
+.url-block {margin-bottom:15px; border:1px solid #ddd; padding:10px; border-radius:5px;}
+.url-title {font-weight:bold; margin-bottom:5px;}
+.i-o-w p {margin:4px 12px;}
+.i-o-w .guide {font-size:14px; color:var(--button-primary);}
+.i-o-w button {flex:1; font-size:17px; line-height:26px; font-weight:700; padding:11px 16px; text-align:center; color:var(--button-primary-tc); background-color:var(--button-primary); border-radius:12px; white-space:nowrap; border:0 none; outline:none;}
+.i-o-w button:disabled {opacity:0.3;}
+.i-o-w h2.title {display:none; border-bottom:1px solid #ddd; padding:0 0 4px;}
+.i-o-w label {font-size:15px; font-weight:bold;}
+.i-o-w .options {display:flex; align-items:center; background-color:var(--background-color-1); border-radius:12px; padding:12px 12px 24px; margin:0 12px 8px;}
+.i-o-w .item {display:flex; align-items:center;}
+.i-o-w .item label {flex-shrink:0; margin-right:12px; font-size:14px;}
+.i-o-w .item input {flex:1;}
+.i-o-w .item input[type='checkbox'] {accent-color:var(--button-primary); vertical-align:middle; margin:0; padding:0; width:18px; height:18px;}
+.i-o-w .item input.image-input {font-size:15px; color:var(--font-point-1);}
+.i-o-w .item.image-file label {display:none;}
+.i-o-w .item.image-file button {border-radius:8px; padding:0 10px; font-size:14px; flex:0; flex-shrink:0;}
+.i-o-w .options .item label {width:50%; text-align:right;}
+.i-o-w .options .item + .item {margin-top:4px;}
+.i-o-w .preview {position:relative; display:flex; align-items:center; justify-content:center; width:114px; height:114px; background-image:var(--trans-img); background-size:var(--trans-size); background-position:var(--trans-position); border:1px solid var(--button-primary);}
+.i-o-w .preview .trans-area {position:absolute; top:0; left:0; right:0; bottom:0;}
+.i-o-w .button-wrap {display:flex; gap:12px; margin:0 12px; justify-content:space-between;}
+.i-o-w .button-wrap #removeButton {flex:0 1;}
+.i-o-w .use-quick-paste {display:flex; gap:8px; padding:4px 12px; justify-content:flex-start; background-color:var(--gray-400);}
+.i-o-w .use-quick-paste label {line-height:30px; color:var(--white);}
+.i-o-w .use-quick-paste input {vertical-align:middle; width:24px; height:24px; accent-color:var(--font-point-2)}
+.i-o-w .use-quick-paste .info {margin-left:auto; line-height:30px; font-size:12px; color:var(--gray-40);}
+.i-o-w .need {padding:4px;}
+.extention-info {display:flex; color:var(--font-point-3); gap:4px; font-size:12px; margin:8px 24px 12px; justify-content:flex-end;}
+#new-version-detected {display:none; font-weight:bold; color:var(--font-point-4);}
+#previewImage .txt {position:absolute; color:var(--button-primary); top:50%; left:50%; transform:translate(-50%, -50%); font-size:18px; font-family:'arial', 'sans-serif'; font-weight:bold; text-align:center; text-shadow:0 0 10px #fff;}
+#previewImage[style*="background-repeat"] .txt {display:none;}
