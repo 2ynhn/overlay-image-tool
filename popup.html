@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Overlay</title>
+  <link rel="stylesheet" href="./src/style/popup.css">
+</head>
+<body>
+	<div class="i-o-w">
+		<h2 class="title">Image Overlay Tool</h2>
+		<div class="use-quick-paste">
+			<input type="checkbox" id="enable-paste" />
+			<label for="enable-paste">Enable Directly Paste</label>
+			<span class="info">Directly Pasting on Page by shortcut 'Ctrl+V'</span>
+		</div>
+		<div class="need">
+			<!-- <p class="guide">Choose The Image File or Just Paste Here!</p> -->
+			<div class="item image-file">
+				<label for="imageInput">Image:</label>
+				<input type="file" id="imageInput" class="image-input" accept="image/*" placeholder="or paste">
+			</div>
+			<p id="alertPaste" style="color: red; display: none;">Can not PASTE because it is not an image type!</p>
+			<p id="alert" style="color: red; display: none;">Please upload a valid image file!</p>
+		</div>
+		<div class="options">
+			<div class="preview">
+				<div class="trans-area" id="previewImage"><span class="txt">JUST PASTE HERE</span></div>
+			</div>
+			<div class="inputs">
+				<div class="item">
+					<label for="bgPosition">Background Position:</label>
+					<input type="text" id="bgPosition" placeholder="center top" value="center top">
+				</div>
+				<div class="item">
+					<label for="bgSize">Background Size:</label>
+					<input type="text" id="bgSize" placeholder="100% auto" value="100% auto">
+				</div>
+				
+				<div class="item">
+					<label for="bgSize">Opacity:</label>
+					<input type="text" id="opacityInput" placeholder="0.3" value="0.3">
+				</div>
+				<div class="item">
+					<label for="grayscaleCheckbox">Gray effect:</label>
+					<span><input type="checkbox" id="grayscaleCheckbox"></span>					
+				</div>
+			</div>
+		</div>
+		<div class="button-wrap">
+			<button id="generateButton" disabled>Generate</button>
+			<button id="removeButton">Remove</button>
+		</div>
+		<div class="extention-info">
+			<span id="">Overlay Image Tool Ver. </span>
+			<span id="current-version"></span>
+			<span id="new-version-detected">NEW Version! Please Update</span>
+		</div>
+	</div>
+	<script src="popup.js"></script>
+</body>
+</html>
