@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Overlay Image Tool",
-  "version": "1.4",
-  "description": "When developing UI, this is a tool that allows you to overlay the design draft on the page and compare and check whether it matches the design.",
+  "version": "1.4",  
+  "description": "Overlay design drafts on your web pages to compare and verify UI implementation accuracy.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
