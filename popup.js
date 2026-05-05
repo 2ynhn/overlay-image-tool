@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show a preview of the image (optional)
     const reader = new FileReader();
     reader.onload = function (e) {
-      console.log("Last image loaded successfully.");
 	  const base64Image = e.target.result;
 	  previewImage.style.backgroundImage = 'url('+ base64Image +')';
 	  previewImage.style.backgroundSize = 'contain';
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		/*
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 			if (tabs[0]) {
-				console.log(tabs[0].id, isEnabled);
 				chrome.tabs.sendMessage(tabs[0].id, { action: isEnabled ? "enable" : "disable" });
 			}
 		}); */

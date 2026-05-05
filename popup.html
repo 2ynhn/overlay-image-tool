@@ -20,8 +20,8 @@
 				<label for="imageInput">Image:</label>
 				<input type="file" id="imageInput" class="image-input" accept="image/*" placeholder="or paste">
 			</div>
-			<p id="alertPaste" style="color: red; display: none;">Can not PASTE because it is not an image type!</p>
-			<p id="alert" style="color: red; display: none;">Please upload a valid image file!</p>
+			<p id="alertPaste" style="display: none;">Can not PASTE because it is not an image type!</p>
+			<p id="alert" style="display: none;">Please upload a valid image file!</p>
 		</div>
 		<div class="options">
 			<div class="preview">
@@ -50,11 +50,6 @@
 		<div class="button-wrap">
 			<button id="generateButton" disabled>Generate</button>
 			<button id="removeButton">Remove</button>
-		</div>
-		<div class="extention-info">
-			<span id="">Overlay Image Tool Ver. </span>
-			<span id="current-version"></span>
-			<span id="new-version-detected">NEW Version! Please Update</span>
 		</div>
 	</div>
 	<script src="popup.js"></script>

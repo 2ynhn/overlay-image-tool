@@ -76,7 +76,6 @@ const updateListeners = (isEnabled) => {
       pasteListener = handlePaste;
       document.addEventListener("paste", pasteListener);
     }
-	console.log("You Can Paste Image on Website\nMove 1px : use Arrow Key(↑ ↓ ← →)\nMove 10px : Shift + arrow\nMove 100px : Ctrl + arrow");
     
   } else {
     if (pasteListener) {
@@ -87,7 +86,6 @@ const updateListeners = (isEnabled) => {
       document.removeEventListener("keydown", keyupListener);
       keyupListener = null;
     }
-    console.log("Paste and Shortcut disabled.");
   }
 };
 // 탭이 로드되었을 때 로컬 스토리지에서 상태 확인
