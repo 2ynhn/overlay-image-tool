@@ -124,32 +124,28 @@ document.addEventListener("DOMContentLoaded", () => {
 	// paste 체크박스 변경 시 처리
 	checkbox.addEventListener("change", () => {
 		chrome.storage.local.set({ enabled: checkbox.checked });
+		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			if (checkbox.checked) {
+				chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enablePasteListener });
+			} else {
+				chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: disablePasteListener });
+			}
+		});
 	});
 
 	// arrow 체크박스 변경 시 처리
 	arrowCheckbox.addEventListener("change", () => {
 		chrome.storage.local.set({ arrowEnabled: arrowCheckbox.checked });
+		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			if (arrowCheckbox.checked) {
+				chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enableArrowListener });
+			} else {
+				chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: disableArrowListener });
+			}
+		});
 	});
 
 	
-	// 현재 버전 가져오기
-	const manifest = chrome.runtime.getManifest();
-	const currentVersion = manifest.version;
-
-	// 버전을 #current-version 요소에 표시
-	const versionElement = document.getElementById("current-version");
-	versionElement.textContent = currentVersion;
-
-	// update alarm
-	chrome.storage.local.get("newVersion", (result) => {
-		if (result.newVersion) {
-		  // 새 버전 알림 표시
-		  const versionAlert = document.getElementById("new-version-detected");
-		  versionAlert.style.display = "block";
-		  // 알림을 표시한 후 다시 초기화
-		  chrome.storage.local.set({ newVersion: false });
-		}
-	});
 });
 
 
@@ -202,6 +198,12 @@ document.getElementById("generateButton").addEventListener("click", () => {
         target: { tabId: tabs[0].id },
         func: overlayImage,
         args: [base64Image, bgPosition, bgSize, opacity, grayscale]
+      });
+
+      // 오버레이 생성 후 리스너 상태 복원
+      chrome.storage.local.get(["enabled", "arrowEnabled"], (result) => {
+        if (result.enabled) chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enablePasteListener });
+        if (result.arrowEnabled) chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enableArrowListener });
       });
 
       // Close the popup
@@ -275,4 +277,55 @@ function overlayImage(base64Image, bgPosition, bgSize, opacity, grayscale) {
   overlay.setAttribute("style", overlayStyle);
   overlay.classList.add("custom-overlay");
   document.body.appendChild(overlay);
+}
+
+// ── 페이지에 주입되는 paste/arrow 리스너 함수들 ──────────────────
+
+function enablePasteListener() {
+  if (window.__overlayPasteListener) return;
+  window.__overlayPasteListener = (event) => {
+    const item = Array.from(event.clipboardData.items).find(x => /^image\//.test(x.type));
+    if (!item) return;
+    const blob = item.getAsFile();
+    const overlay = document.querySelector('.custom-overlay');
+    if (overlay) {
+      overlay.style.backgroundImage = `url(${URL.createObjectURL(blob)})`;
+    }
+  };
+  document.addEventListener('paste', window.__overlayPasteListener);
+}
+
+function disablePasteListener() {
+  if (!window.__overlayPasteListener) return;
+  document.removeEventListener('paste', window.__overlayPasteListener);
+  window.__overlayPasteListener = null;
+}
+
+function enableArrowListener() {
+  if (window.__overlayArrowListener) return;
+  window.__overlayArrowListener = (event) => {
+    const overlay = document.querySelector('.custom-overlay');
+    if (!overlay) return;
+    const tag = document.activeElement?.tagName;
+    const isEditable = document.activeElement?.isContentEditable;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || isEditable) return;
+
+    let currentY = parseInt(getComputedStyle(overlay).backgroundPositionY, 10) || 0;
+    let currentX = parseInt(getComputedStyle(overlay).backgroundPositionX, 10) || 0;
+    let step = 1;
+    if (event.shiftKey) step = 10;
+    if (event.ctrlKey || event.metaKey) step = 100;
+
+    if (event.key === 'ArrowUp')    { overlay.style.backgroundPositionY = `${currentY - step}px`; event.preventDefault(); }
+    if (event.key === 'ArrowDown')  { overlay.style.backgroundPositionY = `${currentY + step}px`; event.preventDefault(); }
+    if (event.key === 'ArrowLeft')  { overlay.style.backgroundPositionX = `${currentX - step}px`; event.preventDefault(); }
+    if (event.key === 'ArrowRight') { overlay.style.backgroundPositionX = `${currentX + step}px`; event.preventDefault(); }
+  };
+  document.addEventListener('keydown', window.__overlayArrowListener);
+}
+
+function disableArrowListener() {
+  if (!window.__overlayArrowListener) return;
+  document.removeEventListener('keydown', window.__overlayArrowListener);
+  window.__overlayArrowListener = null;
 }
