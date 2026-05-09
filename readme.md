@@ -66,8 +66,7 @@ Arrow key move must be enabled in the popup options.
 ```
 overlay-image-tool/
 ├── manifest.json       # Extension manifest (MV3)
-├── background.js       # Service worker — install/update handling
-├── content.js          # Page-level script — paste & keyboard listeners
+├── background.js       # 
 ├── popup.html          # Extension popup markup
 ├── popup.js            # Popup logic — settings, preview, generate/remove
 ├── icon.png            # Extension icon
