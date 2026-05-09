@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const bgSize = document.getElementById("bgSize");
   const opacityInput = document.getElementById("opacityInput");
   const grayscaleCheckbox = document.getElementById("grayscaleCheckbox");
+  const arrowMoveCheckbox = document.getElementById("arrowMoveCheckbox");
   const generateButton = document.getElementById("generateButton");
   const removeButton = document.getElementById("removeButton");
   const previewImage = document.getElementById("previewImage");
@@ -112,26 +113,24 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	// Quick paste 체크하기
 	const checkbox = document.getElementById("enable-paste");
+	const arrowCheckbox = document.getElementById("arrowMoveCheckbox");
+
 	// 체크박스 상태 초기화
-	chrome.storage.local.get("enabled", (result) => {
+	chrome.storage.local.get(["enabled", "arrowEnabled"], (result) => {
 		checkbox.checked = result.enabled || false;
+		arrowCheckbox.checked = result.arrowEnabled || false;
 	});
 
-	// 체크박스 상태 변경 시 처리
+	// paste 체크박스 변경 시 처리
 	checkbox.addEventListener("change", () => {
-		const isEnabled = checkbox.checked;
-		chrome.storage.local.set({ enabled: isEnabled });
-		
-		// 현재 활성 탭에 메시지 전달
-		/*
-		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-			if (tabs[0]) {
-				chrome.tabs.sendMessage(tabs[0].id, { action: isEnabled ? "enable" : "disable" });
-			}
-		}); */
+		chrome.storage.local.set({ enabled: checkbox.checked });
 	});
-	
-	
+
+	// arrow 체크박스 변경 시 처리
+	arrowCheckbox.addEventListener("change", () => {
+		chrome.storage.local.set({ arrowEnabled: arrowCheckbox.checked });
+	});
+
 	
 	// 현재 버전 가져오기
 	const manifest = chrome.runtime.getManifest();
