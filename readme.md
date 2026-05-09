@@ -1,6 +1,6 @@
 # Overlay Image Tool
 
-A Chrome extension for UI developers and publishers — overlay a design mockup on a live page as a semi-transparent layer to visually compare layout accuracy.
+A Chrome extension for UI developers — overlay a design mockup on a live page as a semi-transparent layer to compare layout accuracy.
 
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=googlechrome&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-brightgreen)
@@ -11,40 +11,43 @@ A Chrome extension for UI developers and publishers — overlay a design mockup 
 
 ## Overview
 
-When publishing a web page, pixel-perfect comparison between the design draft and the actual implementation is essential. **Overlay Image Tool** injects your design image directly on top of the page as a fixed overlay, letting you spot spacing, alignment, and sizing issues at a glance — without switching between windows.
+Overlay your design draft on any page to compare with the actual UI.
 
 ---
 
 ## Features
 
-- **File upload or clipboard paste** — load an image by file picker or paste directly from clipboard (`Ctrl+V`) inside the popup
-- **Direct page paste** — enable Quick Paste mode to paste an image overlay directly onto any webpage with `Ctrl+V`
-- **Live position & size control** — set `background-position` and `background-size` via free-text fields; values are applied immediately on generate
-- **Opacity control** — dial in transparency to see the page beneath the overlay
-- **Grayscale toggle** — convert the overlay to grayscale to reduce visual noise when checking structure
-- **Keyboard nudging** — fine-tune overlay position after applying without reopening the popup
-
-  | Key | Movement |
-  |---|---|
-  | `↑` `↓` `←` `→` | 1px |
-  | `Shift` + arrow | 10px |
-  | `Ctrl` / `⌘` + arrow | 100px |
-
-- **Session memory** — last used image and all settings are restored automatically when you reopen the popup
+- **File upload or clipboard paste** — load an image via file picker, or paste from clipboard (`Ctrl+V`) inside the popup
+- **Enable Directly Paste** — toggle on to paste an image overlay onto the page directly with `Ctrl+V`, without opening the popup
+- **Position & size control** — set `background-position` and `background-size` via free-text input
+- **Opacity** — adjust overlay transparency
+- **Gray effect** — convert the overlay to grayscale to reduce visual noise
+- **Arrow key move** — enable keyboard nudging to fine-tune overlay position after applying
+- **Session memory** — last used image and all settings are restored automatically on next open
 - **One-click remove** — clear the overlay from the current page instantly
+
+---
+
+## Keyboard Shortcuts
+
+Arrow key move must be enabled in the popup options.
+
+| Key | Movement |
+|---|---|
+| `↑` `↓` `←` `→` | 1px |
+| `Shift` + arrow | 10px |
+| `Ctrl` / `⌘` + arrow | 100px |
+
+> Arrow key move is automatically disabled when focus is inside a text field, select box, or any editable element, to avoid conflicts with native browser behavior.
 
 ---
 
 ## Installation
 
-### From source (Developer mode)
-
 1. Clone or download this repository
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (top-right toggle)
 4. Click **Load unpacked** and select the project folder
-
-The extension icon will appear in your toolbar.
 
 ---
 
@@ -52,14 +55,9 @@ The extension icon will appear in your toolbar.
 
 1. Click the **Overlay Image Tool** icon in the Chrome toolbar
 2. Select an image file, or paste one from clipboard inside the popup
-3. Adjust position, size, opacity, and grayscale as needed
+3. Adjust position, size, opacity, and options as needed
 4. Click **Generate** — the overlay appears on the current page
-5. Use arrow keys to nudge the overlay position precisely
-6. Click **Remove** (or reopen the popup and click Remove) to clear the overlay
-
-### Quick Paste mode
-
-Enable the **Enable Directly Paste** toggle to allow pasting an image directly onto any page with `Ctrl+V` — no need to open the popup each time.
+5. Click **Remove** to clear the overlay
 
 ---
 
@@ -87,7 +85,6 @@ overlay-image-tool/
 | `activeTab` | Apply the overlay to the current tab |
 | `scripting` | Inject the overlay element into the page |
 | `storage` | Persist settings and last-used image across sessions |
-| `host_permissions: <all_urls>` | Allow operation on any page |
 
 ---
 
