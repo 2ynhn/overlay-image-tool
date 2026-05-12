@@ -271,3 +271,28 @@ body {
   color: var(--text-1);
   opacity: 1;
 }
+
+.i-o-w .inputs .hint {
+  margin: 0;
+  font-size: 10px;
+  color: var(--text-3);
+  padding-left: 4px;
+  line-height: 1.4;
+}
+
+/* Reset / Remove secondary buttons */
+.i-o-w .button-wrap #resetButton,
+.i-o-w .button-wrap #removeButton {
+  flex: 0 0 auto;
+  background: #1e2333;
+  color: #8b93a8;
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 11px 14px;
+  font-size: 13px;
+}
+.i-o-w .button-wrap #resetButton:hover,
+.i-o-w .button-wrap #removeButton:hover {
+  background: #252b3d;
+  color: var(--text-1);
+  opacity: 1;
+}

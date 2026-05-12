@@ -12,12 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load stored data from localStorage
   const lastImage = localStorage.getItem("lastImage");
-  const lastBgPosition = localStorage.getItem("lastBgPosition") || "center top";
-  const lastBgSize = localStorage.getItem("lastBgSize") || "auto auto";
+  const lastBgSize = localStorage.getItem("lastBgSize") || "100% auto";
   const lastOpacity = localStorage.getItem("lastOpacity") || "0.3";
   const lastGrayscale = localStorage.getItem("lastGrayscale") === "true";
 
-  bgPosition.value = lastBgPosition;
+  // bgPosition: 드래그/arrow 이동 후 chrome.storage에 저장되므로 우선 참조
+  chrome.storage.local.get("bgPosition", (result) => {
+    bgPosition.value = result.bgPosition || localStorage.getItem("lastBgPosition") || "center top";
+  });
   bgSize.value = lastBgSize;
   opacityInput.value = lastOpacity;
   grayscaleCheckbox.checked = lastGrayscale;
@@ -145,22 +147,32 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	});
 
+	// Reset 버튼
+	document.getElementById("resetButton").addEventListener("click", () => {
+		bgPosition.value = "center top";
+		bgSize.value = "100% auto";
+		chrome.storage.local.set({ bgPosition: "center top" });
+		localStorage.setItem("lastBgPosition", "center top");
+		localStorage.setItem("lastBgSize", "100% auto");
+	});
+
 	
 });
 
 
 document.getElementById("removeButton").addEventListener("click", () => {
 	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: disableDragListener });
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
         func: removeImageThisPage,
       });
-      // Close the popup
       window.close();
     });
 });
 function removeImageThisPage(){
 	document.querySelectorAll(".custom-overlay").forEach((el) => el.remove());
+	if(window.__oitDragFn){document.removeEventListener("mousedown",window.__oitDragFn);window.__oitDragFn=null;}
 }
 
 // Save last used image and settings
@@ -189,6 +201,7 @@ document.getElementById("generateButton").addEventListener("click", () => {
     localStorage.setItem("lastImage", base64Image.split(",")[1]); // Remove the "data:image/png;base64," prefix
     localStorage.setItem("lastBgPosition", bgPosition);
     localStorage.setItem("lastBgSize", bgSize);
+    chrome.storage.local.set({ bgPosition: bgPosition });
     localStorage.setItem("lastOpacity", opacity);
     localStorage.setItem("lastGrayscale", grayscale);
 
@@ -205,6 +218,7 @@ document.getElementById("generateButton").addEventListener("click", () => {
         if (result.enabled) chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enablePasteListener });
         if (result.arrowEnabled) chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enableArrowListener });
       });
+      chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, func: enableDragListener });
 
       // Close the popup
       window.close();
@@ -316,10 +330,16 @@ function enableArrowListener() {
     if (event.shiftKey) step = 10;
     if (event.ctrlKey || event.metaKey) step = 100;
 
-    if (event.key === 'ArrowUp')    { overlay.style.backgroundPositionY = `${currentY - step}px`; event.preventDefault(); }
-    if (event.key === 'ArrowDown')  { overlay.style.backgroundPositionY = `${currentY + step}px`; event.preventDefault(); }
-    if (event.key === 'ArrowLeft')  { overlay.style.backgroundPositionX = `${currentX - step}px`; event.preventDefault(); }
-    if (event.key === 'ArrowRight') { overlay.style.backgroundPositionX = `${currentX + step}px`; event.preventDefault(); }
+    let moved = false;
+    if (event.key === 'ArrowUp')    { overlay.style.backgroundPositionY = `${currentY - step}px`; event.preventDefault(); moved = true; }
+    if (event.key === 'ArrowDown')  { overlay.style.backgroundPositionY = `${currentY + step}px`; event.preventDefault(); moved = true; }
+    if (event.key === 'ArrowLeft')  { overlay.style.backgroundPositionX = `${currentX - step}px`; event.preventDefault(); moved = true; }
+    if (event.key === 'ArrowRight') { overlay.style.backgroundPositionX = `${currentX + step}px`; event.preventDefault(); moved = true; }
+    if (moved) {
+      const cx = getComputedStyle(overlay).backgroundPositionX;
+      const cy = getComputedStyle(overlay).backgroundPositionY;
+      chrome.storage.local.set({ bgPosition: cx + ' ' + cy });
+    }
   };
   document.addEventListener('keydown', window.__overlayArrowListener);
 }
@@ -328,4 +348,71 @@ function disableArrowListener() {
   if (!window.__overlayArrowListener) return;
   document.removeEventListener('keydown', window.__overlayArrowListener);
   window.__overlayArrowListener = null;
+}
+
+function enableDragListener() {
+  if (window.__oitDragFn) return;
+
+  // 마우스/터치 공통 좌표 추출
+  function getXY(e) {
+    if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  // 터치: 두 손가락 이상이면 패스 (스크롤/줌 허용)
+  function isTouchDrag(e) {
+    return e.touches && e.touches.length === 1;
+  }
+
+  function startDrag(e) {
+    // 마우스/터치 모두 Ctrl 필수
+    if (!e.ctrlKey) return;
+    const isMouse = e.type === 'mousedown';
+    if (!isMouse && !isTouchDrag(e)) return;
+
+    const ov = document.querySelector('.custom-overlay');
+    if (!ov) return;
+    e.preventDefault();
+
+    const { x: startX, y: startY } = getXY(e);
+    const startPosX = parseInt(getComputedStyle(ov).backgroundPositionX) || 0;
+    const startPosY = parseInt(getComputedStyle(ov).backgroundPositionY) || 0;
+
+    if (isMouse) document.body.style.cursor = 'grabbing';
+
+    function onMove(e) {
+      const { x, y } = getXY(e);
+      ov.style.backgroundPositionX = (startPosX + x - startX) + 'px';
+      ov.style.backgroundPositionY = (startPosY + y - startY) + 'px';
+    }
+    function onEnd() {
+      if (isMouse) document.body.style.cursor = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+      // 드래그 후 현재 position을 storage에 저장
+      const ov2 = document.querySelector('.custom-overlay');
+      if (ov2) {
+        const cx = getComputedStyle(ov2).backgroundPositionX;
+        const cy = getComputedStyle(ov2).backgroundPositionY;
+        chrome.storage.local.set({ bgPosition: cx + ' ' + cy });
+      }
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+  }
+
+  window.__oitDragFn = startDrag;
+  document.addEventListener('mousedown', window.__oitDragFn);
+  document.addEventListener('touchstart', window.__oitDragFn, { passive: false });
+}
+
+function disableDragListener() {
+  if (!window.__oitDragFn) return;
+  document.removeEventListener('mousedown', window.__oitDragFn);
+  document.removeEventListener('touchstart', window.__oitDragFn);
+  window.__oitDragFn = null;
 }
